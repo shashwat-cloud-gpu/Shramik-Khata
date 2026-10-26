@@ -44,15 +44,8 @@ In India, over **450 million construction laborers, masons, painters, domestic w
 
 The server is currently running locally on:
 ```
-http://localhost:8000
+https://shramikkhata.vercel.app/
 ```
-
-### To start manually:
-```bash
-# 1. Activate environment and ensure SARVAM_API_KEY is in .env
-python3 -m uvicorn app:app --host 0.0.0.0 --port 8000 --reload
-```
-
 ---
 
 ## 🎯 3-Minute Hackathon Presentation Flow
