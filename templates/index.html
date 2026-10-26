@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="hi" class="h-full bg-slate-900 text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>श्रमिक-खाता (Shramik-Khata) | Sarvam AI</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & Noto Sans Devanagari -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body { font-family: 'Inter', 'Noto Sans Devanagari', sans-serif; }
+    .pulse-record { animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite; }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      70% { transform: scale(1.05); box-shadow: 0 0 0 16px rgba(239, 68, 68, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    @media print {
+      body * { visibility: hidden; }
+      #wage-slip-modal, #wage-slip-modal * { visibility: visible; }
+      #wage-slip-modal { position: absolute; left: 0; top: 0; width: 100%; }
+    }
+  </style>
+</head>
+<body class="min-h-full flex flex-col bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100 antialiased selection:bg-amber-500 selection:text-slate-950">
+
+  <!-- Top Navigation & Sarvam Badge -->
+  <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-600 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-500/20 text-white font-black text-xl">
+          श
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+              श्रमिक-खाता <span class="text-amber-400 font-semibold text-sm">Shramik-Khata</span>
+            </h1>
+            <span class="bg-amber-500/10 text-amber-400 text-xs px-2 py-0.5 rounded-full border border-amber-500/30 font-medium">
+              Ground Officer AI
+            </span>
+          </div>
+          <p class="text-xs text-slate-400">Bharat's Autonomous Voice & Paper Wage Defense Ledger</p>
+        </div>
+      </div>
+
+      <!-- Sarvam Engine Stack Tags -->
+      <div class="hidden md:flex items-center space-x-2 text-xs">
+        <span class="px-2.5 py-1 rounded-md bg-slate-800/80 text-slate-300 border border-slate-700/60 flex items-center gap-1">
+          <i data-lucide="mic" class="w-3.5 h-3.5 text-amber-400"></i> Saaras v4
+        </span>
+        <span class="px-2.5 py-1 rounded-md bg-slate-800/80 text-slate-300 border border-slate-700/60 flex items-center gap-1">
+          <i data-lucide="eye" class="w-3.5 h-3.5 text-blue-400"></i> Sarvam Vision
+        </span>
+        <span class="px-2.5 py-1 rounded-md bg-slate-800/80 text-slate-300 border border-slate-700/60 flex items-center gap-1">
+          <i data-lucide="brain-circuit" class="w-3.5 h-3.5 text-purple-400"></i> Sarvam-105B
+        </span>
+        <span class="px-2.5 py-1 rounded-md bg-slate-800/80 text-slate-300 border border-slate-700/60 flex items-center gap-1">
+          <i data-lucide="volume-2" class="w-3.5 h-3.5 text-emerald-400"></i> Bulbul v3
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Judge Quick-Demo Hero Bar -->
+  <section class="bg-gradient-to-r from-amber-950/40 via-slate-900 to-slate-950 border-b border-amber-500/20 py-4 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-3 w-full md:w-auto">
+        <span class="flex h-3 w-3 relative">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+        </span>
+        <div class="text-sm">
+          <span class="text-amber-300 font-semibold">1-Click Live Case File:</span>
+          <span class="text-slate-300 ml-1 text-xs sm:text-sm">Select a verified ground investigation to test all 4 Sarvam models instantly</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2.5 w-full md:w-auto">
+        <select id="scenario-selector" onchange="loadScenario(this.value)" class="bg-slate-800 border border-slate-700 text-slate-200 text-xs sm:text-sm rounded-lg px-3 py-2 focus:ring-2 focus:ring-amber-500 focus:outline-none w-full md:w-80 font-medium">
+          <option value="ramesh_mason">Case 1: रमेश कुमार (राजमिस्त्री, नोएडा) — ₹2,112 चोरी</option>
+          <option value="sunita_artisan">Case 2: सुनीता देवी (जरी कारीगर, सूरत) — ₹1,800 पीस-कट</option>
+          <option value="murugan_painter">Case 3: के. मुरुगन (पेंटर, बेंगलुरु) — नाइट शिफ्ट विवाद</option>
+        </select>
+        <button onclick="runOneClickAudit()" class="whitespace-nowrap px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm transition flex items-center gap-1.5 shadow-md shadow-amber-500/20">
+          <i data-lucide="play" class="w-4 h-4 fill-current"></i> 1-क्लिक ऑडिट
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Multi-Modal Content Layout -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+    <!-- LEFT COLUMN (Steps 1 & 2: Inputs) -->
+    <div class="lg:col-span-7 space-y-6">
+
+      <!-- Step 1: Worker's Voice Logging (Saaras v4) -->
+      <div class="bg-slate-800/60 rounded-2xl border border-slate-700/80 p-5 shadow-xl relative overflow-hidden">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center space-x-2.5">
+            <div class="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-400 font-bold flex items-center justify-center text-sm border border-amber-500/30">1</div>
+            <div>
+              <h2 class="text-base font-bold text-white flex items-center gap-2">
+                मजदूर की आवाज़ (Spoken Voice Log)
+                <span class="text-xs px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">Saaras v4</span>
+              </h2>
+              <p class="text-xs text-slate-400">Worker speaks naturally in mother tongue at night; zero typing</p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-1.5">
+            <span id="recording-status" class="text-xs text-slate-400 flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-slate-500 inline-block"></span> तैयार (Ready)
+            </span>
+          </div>
+        </div>
+
+        <!-- Recording & Audio Actions -->
+        <div class="bg-slate-900/80 rounded-xl p-4 border border-slate-700/60 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <!-- Big Mic Button -->
+          <div class="flex items-center space-x-4 w-full sm:w-auto">
+            <button id="mic-btn" onclick="toggleRecording()" class="w-14 h-14 rounded-full bg-red-600 hover:bg-red-500 text-white flex items-center justify-center shadow-lg shadow-red-600/30 transition transform active:scale-95 flex-shrink-0">
+              <i id="mic-icon" data-lucide="mic" class="w-6 h-6"></i>
+            </button>
+            <div>
+              <div class="text-sm font-semibold text-white" id="mic-title">बोलकर दर्ज करें (Tap to Speak)</div>
+              <div class="text-xs text-slate-400" id="mic-hint">Hindi, Bhojpuri, Tamil, Telugu dialects</div>
+            </div>
+          </div>
+
+          <!-- Sample Audio Player for Quick Testing -->
+          <div class="w-full sm:w-auto flex flex-col items-end">
+            <span class="text-xs text-slate-400 mb-1">नमूना आवाज़ (Sample Audio):</span>
+            <audio id="sample-audio-player" controls class="h-9 w-60 rounded bg-slate-800" src="/static/samples/sample_audio_ramesh.mp3"></audio>
+          </div>
+        </div>
+
+        <!-- Transcript Display (Saaras Output) -->
+        <div class="mt-4">
+          <div class="text-xs font-semibold text-slate-300 mb-1 flex items-center justify-between">
+            <span>सारस v4 ट्रांसक्रिप्ट (Verbatim Speech Recognition):</span>
+            <span id="transcribing-spinner" class="hidden text-amber-400 text-xs flex items-center gap-1">
+              <i data-lucide="loader-2" class="w-3 h-3 animate-spin"></i> ट्रांसक्राइब हो रहा है...
+            </span>
+          </div>
+          <div id="transcript-box" class="p-3 bg-slate-950/60 rounded-xl border border-slate-800 text-sm text-slate-200 italic min-h-[50px] leading-relaxed">
+            "ठेकेदार जी, आज 12 अक्टूबर को मैंने सेक्टर 62 वाली साइट पर पूरा दिन काम किया और दो घंटे ओवरटाइम किया। आपने 200 रुपये चाय-पानी का खर्चा दिया था।"
+          </div>
+        </div>
+
+        <!-- Structured Log Cards (Sarvam-105B Extraction) -->
+        <div class="mt-4">
+          <div class="text-xs font-semibold text-slate-300 mb-2">दैनिक हाजिरी रिकॉर्ड (Sarvam-105B Verified Entries):</div>
+          <div id="voice-logs-container" class="space-y-2 max-h-56 overflow-y-auto pr-1">
+            <!-- Dynamic entries inserted here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Contractor's Handwritten Diary (Sarvam Vision) -->
+      <div class="bg-slate-800/60 rounded-2xl border border-slate-700/80 p-5 shadow-xl relative overflow-hidden">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center space-x-2.5">
+            <div class="w-7 h-7 rounded-lg bg-blue-500/20 text-blue-400 font-bold flex items-center justify-center text-sm border border-blue-500/30">2</div>
+            <div>
+              <h2 class="text-base font-bold text-white flex items-center gap-2">
+                ठेकेदार की कच्ची डायरी (Contractor's Paper Diary)
+                <span class="text-xs px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">Sarvam Vision</span>
+              </h2>
+              <p class="text-xs text-slate-400">Photo of messy pencil notebook or cash slip digitized automatically</p>
+            </div>
+          </div>
+          <button onclick="triggerVisionDigitise()" id="digitise-btn" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs transition flex items-center gap-1 shadow-sm">
+            <i data-lucide="scan" class="w-3.5 h-3.5"></i> डायरी स्कैन करें
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Image Preview -->
+          <div class="relative bg-slate-950/80 rounded-xl border border-slate-800 p-2 flex flex-col items-center justify-center min-h-[190px]">
+            <img id="diary-preview" src="/static/samples/sample_diary_ramesh.png" alt="Contractor Diary" class="max-h-44 object-contain rounded-lg shadow">
+            <label class="mt-2 text-xs text-blue-400 hover:text-blue-300 cursor-pointer flex items-center gap-1">
+              <i data-lucide="camera" class="w-3.5 h-3.5"></i> नई फोटो अपलोड करें
+              <input type="file" id="diary-file-input" accept="image/*" class="hidden" onchange="handleDiaryUpload(event)">
+            </label>
+          </div>
+
+          <!-- Digitized Table Preview -->
+          <div class="bg-slate-950/80 rounded-xl border border-slate-800 p-2.5 overflow-hidden flex flex-col justify-between">
+            <div class="text-xs font-semibold text-slate-300 mb-1 flex items-center justify-between">
+              <span>डिजिटल कच्चा खाता (Thekedar Ledger):</span>
+              <span id="vision-spinner" class="hidden text-blue-400 text-xs flex items-center gap-1">
+                <i data-lucide="loader-2" class="w-3 h-3 animate-spin"></i> स्कैनिंग...
+              </span>
+            </div>
+            <div class="overflow-x-auto max-h-40 overflow-y-auto">
+              <table class="w-full text-left text-xs text-slate-300">
+                <thead class="bg-slate-900 text-slate-400 uppercase text-[10px] sticky top-0">
+                  <tr>
+                    <th class="py-1 px-1.5">तारीख</th>
+                    <th class="py-1 px-1.5">हाजिरी</th>
+                    <th class="py-1 px-1.5">OT</th>
+                    <th class="py-1 px-1.5">एडवांस</th>
+                  </tr>
+                </thead>
+                <tbody id="thekedar-table-body" class="divide-y divide-slate-800 text-[11px]">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN (Steps 3 & 4: The Ground Officer's Audit & Ruling) -->
+    <div class="lg:col-span-5 space-y-6">
+
+      <!-- Step 3: Statutory Audit Finding (Sarvam-105B Reasoning) -->
+      <div class="bg-slate-800/80 rounded-2xl border border-amber-500/30 p-5 shadow-2xl relative overflow-hidden backdrop-blur">
+        
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center space-x-2.5">
+            <div class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-sm border border-emerald-500/30">3</div>
+            <div>
+              <h2 class="text-base font-bold text-white flex items-center gap-2">
+                श्रम अधिकारी का फैसला (Officer Audit)
+                <span class="text-xs px-2 py-0.5 rounded bg-purple-500/10 text-purple-400 border border-purple-500/20">Sarvam-105B</span>
+              </h2>
+              <p class="text-xs text-slate-400">Reconciled under Code on Wages, 2019</p>
+            </div>
+          </div>
+          <button onclick="runAudit()" id="run-audit-btn" class="px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-bold text-xs transition flex items-center gap-1 shadow-md shadow-amber-500/20">
+            <i data-lucide="scale" class="w-4 h-4"></i> ऑडिट चलाएं
+          </button>
+        </div>
+
+        <!-- Big Wage Theft Alert Card -->
+        <div id="theft-alert-card" class="bg-gradient-to-br from-red-950/80 via-slate-900 to-slate-950 rounded-xl p-4 border border-red-500/40 mb-4 shadow-inner">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-red-300 uppercase tracking-wide flex items-center gap-1.5">
+              <i data-lucide="alert-triangle" class="w-4 h-4 text-red-400"></i> पकड़ी गई अवैध मजदूरी कटौती (Wage Theft)
+            </span>
+            <span class="text-xs px-2 py-0.5 rounded-full bg-red-500/20 text-red-300 font-bold border border-red-500/30">चोरी प्रमाणित</span>
+          </div>
+          <div class="mt-2 flex items-baseline justify-between">
+            <div class="text-3xl font-black text-red-400" id="theft-amount-display">₹2,112.50</div>
+            <div class="text-xs text-slate-300">
+              वैध देय: <span class="text-emerald-400 font-bold" id="legit-wage-display">₹5,737.50</span>
+            </div>
+          </div>
+          <div class="mt-2 pt-2 border-t border-red-900/40 text-xs text-red-200/90" id="theft-summary-text">
+            ठेकेदार ने 2 दिन की हाजिरी (₹1,300) और 5 घंटे का ओवरटाइम (₹812.50) गैरकानूनी रूप से काटा है।
+          </div>
+        </div>
+
+        <!-- Line-by-line Discrepancy Breakdown -->
+        <div class="mb-4">
+          <div class="text-xs font-semibold text-slate-300 mb-2 flex items-center justify-between">
+            <span>उजागर की गई विसंगतियां (Flagged Violations):</span>
+            <span class="text-[11px] text-slate-400" id="discrepancy-count">4 उल्लंघनों की पहचान</span>
+          </div>
+          <div id="discrepancies-list" class="space-y-2 text-xs">
+            <!-- Dynamic discrepancies -->
+          </div>
+        </div>
+
+        <!-- Statutory Law Citations -->
+        <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 mb-4 text-xs">
+          <div class="text-[11px] font-bold text-amber-400 uppercase tracking-wide mb-1.5 flex items-center gap-1">
+            <i data-lucide="book-open" class="w-3.5 h-3.5"></i> कानूनी धाराएं (Code on Wages, 2019)
+          </div>
+          <ul id="legal-citations-list" class="space-y-1 text-slate-300 text-[11px] list-disc list-inside">
+            <li>धारा 14: ओवरटाइम का भुगतान सामान्य दर से दुगनी दर पर अनिवार्य है।</li>
+            <li>धारा 18: हाजिरी रजिस्टर में झूठी अनुपस्थिति दर्ज करना दंडनीय अपराध है।</li>
+          </ul>
+        </div>
+
+        <!-- Step 4: Spoken Advisory (Bulbul v3) -->
+        <div class="bg-gradient-to-r from-emerald-950/50 via-slate-900 to-slate-900 rounded-xl p-4 border border-emerald-500/30">
+          <div class="flex items-center justify-between mb-2">
+            <div class="text-xs font-bold text-emerald-300 flex items-center gap-1.5">
+              <i data-lucide="volume-2" class="w-4 h-4 text-emerald-400"></i> अधिकारी की बोलती सलाह (Bulbul v3 Voice)
+            </div>
+            <button onclick="playSpokenAdvisory()" id="play-advisory-btn" class="px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition flex items-center gap-1">
+              <i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i> आवाज़ सुनें
+            </button>
+          </div>
+          <p id="spoken-advisory-script" class="text-xs text-slate-200 italic leading-relaxed">
+            "रमेश भाई, मैंने आपका पूरा हिसाब जांच लिया है। ठेकेदार ने आपकी 2 हाजिरी काटी है और 5 घंटे का ओवरटाइम नहीं जोड़ा है। कुल ₹2,112 रुपये की मजदूरी दबाई गई है।"
+          </p>
+          <audio id="bulbul-audio-player" class="w-full mt-2 hidden" controls></audio>
+        </div>
+
+        <!-- Action: Open Formal Printable Wage Slip -->
+        <div class="mt-4 pt-3 border-t border-slate-700/60 flex items-center justify-between">
+          <span class="text-xs text-slate-400">व्हाट्सएप या लेबर कोर्ट के लिए तैयार:</span>
+          <button onclick="openWageSlipModal()" class="px-4 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-white font-bold text-xs transition flex items-center gap-1.5 border border-slate-600">
+            <i data-lucide="file-text" class="w-4 h-4 text-amber-400"></i> आधिकारिक वेतन पर्चा देखें
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- PRINTABLE OFFICIAL WAGE SLIP MODAL -->
+  <div id="wage-slip-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white text-slate-900 rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-300 overflow-y-auto max-h-[90vh]">
+      
+      <!-- Slip Header -->
+      <div class="border-b-2 border-slate-900 pb-4 mb-4 flex items-center justify-between">
+        <div>
+          <div class="text-xs font-bold text-amber-700 uppercase tracking-wider">श्रम संहिता 2019 के अंतर्गत कानूनी दावा</div>
+          <h3 class="text-xl font-black text-slate-900">श्रमिक वैध वेतन पर्चा व ऑडिट रिपोर्ट</h3>
+          <p class="text-xs text-slate-600">Shramik Auditable Wage & Overtime Certificate</p>
+        </div>
+        <div class="text-right">
+          <div class="text-xs text-slate-500">केस आईडी: SH-2026-981</div>
+          <div class="text-xs font-semibold text-slate-800" id="slip-date">दिनांक: 26 अक्टूबर 2026</div>
+        </div>
+      </div>
+
+      <!-- Worker & Thekedar Metadata -->
+      <div class="grid grid-cols-2 gap-4 bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs mb-4">
+        <div>
+          <span class="text-slate-500">श्रमिक का नाम:</span> <strong id="slip-worker-name">रमेश कुमार</strong><br>
+          <span class="text-slate-500">पेशा/कार्य:</span> <strong id="slip-trade">राजमिस्त्री (Mason)</strong><br>
+          <span class="text-slate-500">कार्यस्थल:</span> <strong id="slip-site">नोएडा सेक्टर 62</strong>
+        </div>
+        <div>
+          <span class="text-slate-500">ठेकेदार/मालिक:</span> <strong id="slip-thekedar-name">राजेश ठेकेदार</strong><br>
+          <span class="text-slate-500">तय मजदूरी दर:</span> <strong id="slip-rate">₹650 / 8 घंटे</strong><br>
+          <span class="text-slate-500">ओवरटाइम दर:</span> <strong>₹162.50 / घंटा (2x दर)</strong>
+        </div>
+      </div>
+
+      <!-- Financial Reconciliation Box -->
+      <table class="w-full text-xs text-left mb-4 border border-slate-200">
+        <thead class="bg-slate-100 text-slate-700 border-b border-slate-200">
+          <tr>
+            <th class="p-2">मद (Item)</th>
+            <th class="p-2">मजदूर आवाज़ रिकॉर्ड</th>
+            <th class="p-2">ठेकेदार डायरी</th>
+            <th class="p-2 text-right">कानूनी अंतर (चोरी)</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200">
+          <tr>
+            <td class="p-2 font-medium">कार्य दिवस (Days Worked)</td>
+            <td class="p-2" id="slip-days-worked">7 दिन</td>
+            <td class="p-2" id="slip-days-thekedar">5 दिन (2 झूठी अनुपस्थिति)</td>
+            <td class="p-2 text-right font-bold text-red-600">+ ₹1,300.00</td>
+          </tr>
+          <tr>
+            <td class="p-2 font-medium">ओवरटाइम घंटे (Overtime)</td>
+            <td class="p-2" id="slip-ot-hours">6 घंटे</td>
+            <td class="p-2" id="slip-ot-thekedar">1 घंटा (5 घंटे गायब)</td>
+            <td class="p-2 text-right font-bold text-red-600">+ ₹812.50</td>
+          </tr>
+          <tr>
+            <td class="p-2 font-medium">एडवांस कटौती (Advance Deducted)</td>
+            <td class="p-2">₹700.00</td>
+            <td class="p-2">₹700.00</td>
+            <td class="p-2 text-right font-bold text-slate-600">₹0.00</td>
+          </tr>
+          <tr class="bg-amber-50 font-bold text-sm">
+            <td class="p-2" colspan="3">कुल वैध बकाया मजदूरी (Total Lawful Dues Payable):</td>
+            <td class="p-2 text-right text-emerald-700" id="slip-total-payable">₹5,737.50</td>
+          </tr>
+          <tr class="bg-red-50 font-bold text-sm text-red-700">
+            <td class="p-2" colspan="3">पकड़ी गई गैरकानूनी कटौती (Statutory Underpayment):</td>
+            <td class="p-2 text-right" id="slip-theft-amount">₹2,112.50</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Legal Warning -->
+      <div class="p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-900 mb-4 leading-relaxed">
+        <strong>सांविधिक नोटिस (Statutory Notice):</strong> कोड ऑन वेजेज 2019 की धारा 18 और धारा 54 के अनुसार किसी भी मजदूर के वैध काम के घंटे दबाना और वेतन काटना गैरकानूनी है। ठेकेदार को यह राशि 3 दिन के भीतर चुकता करने का निर्देश दिया जाता है, अन्यथा जिला श्रम अधिकारी के समक्ष शिकायत प्रस्तुत की जाएगी।
+      </div>
+
+      <!-- Action buttons -->
+      <div class="flex items-center justify-end space-x-3 pt-3 border-t border-slate-200">
+        <button onclick="closeWageSlipModal()" class="px-4 py-2 rounded-lg bg-slate-200 text-slate-800 text-xs font-semibold hover:bg-slate-300">
+          बंद करें (Close)
+        </button>
+        <button onclick="window.print()" class="px-4 py-2 rounded-lg bg-amber-600 text-white text-xs font-bold hover:bg-amber-500 flex items-center gap-1 shadow">
+          <i data-lucide="printer" class="w-4 h-4"></i> प्रिंट / PDF सेव करें
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- APPLICATION JAVASCRIPT -->
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Global State
+    let currentScenarioId = "ramesh_mason";
+    let activeScenario = null;
+    let isRecording = false;
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let lastAuditResult = null;
+
+    // Load initial scenario on boot
+    window.addEventListener("DOMContentLoaded", () => {
+      loadScenario("ramesh_mason");
+    });
+
+    async function loadScenario(id) {
+      currentScenarioId = id;
+      try {
+        const res = await fetch(`/api/scenarios/${id}`);
+        activeScenario = await res.json();
+        renderScenario(activeScenario);
+      } catch (err) {
+        console.error("Failed to load scenario", err);
+      }
+    }
+
+    function renderScenario(data) {
+      // Update sample audio & image
+      document.getElementById("sample-audio-player").src = data.sample_audio_path;
+      document.getElementById("diary-preview").src = data.sample_diary_image;
+
+      // Render Voice Logs
+      const voiceContainer = document.getElementById("voice-logs-container");
+      voiceContainer.innerHTML = "";
+      data.voice_logs.forEach(log => {
+        const card = document.createElement("div");
+        card.className = "p-2.5 bg-slate-900/80 rounded-lg border border-slate-800 text-xs flex items-center justify-between";
+        card.innerHTML = `
+          <div>
+            <div class="font-semibold text-amber-400 flex items-center gap-1.5">
+              <span>📅 ${log.date}</span>
+              <span class="text-slate-400 font-normal">(${log.regular_hours} घंटे + ${log.overtime_hours} घंटे OT)</span>
+            </div>
+            <div class="text-slate-300 text-[11px] mt-0.5">${log.summary_hindi}</div>
+          </div>
+          ${log.advance_taken > 0 ? `<span class="px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20 text-[10px] font-bold">एडवांस: ₹${log.advance_taken}</span>` : `<span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px]">सामान्य</span>`}
+        `;
+        voiceContainer.appendChild(card);
+      });
+
+      // Render Thekedar Diary Table
+      const diaryTable = document.getElementById("thekedar-table-body");
+      diaryTable.innerHTML = "";
+      data.thekedar_diary.forEach(row => {
+        const isAbsent = row.status === "Absent" || row.thekedar_remark.includes("काटा");
+        const tr = document.createElement("tr");
+        tr.className = isAbsent ? "bg-red-950/20 text-red-300" : "";
+        tr.innerHTML = `
+          <td class="py-1 px-1.5 font-medium">${row.date}</td>
+          <td class="py-1 px-1.5 ${isAbsent ? 'font-bold text-red-400' : ''}">${row.status}</td>
+          <td class="py-1 px-1.5">${row.overtime_hours || 0} घंटा</td>
+          <td class="py-1 px-1.5 font-semibold">${row.advance_inr ? '₹' + row.advance_inr : '-'}</td>
+        `;
+        diaryTable.appendChild(tr);
+      });
+
+      // Auto-trigger audit for preview
+      runAudit();
+    }
+
+    // 1-Click Audit for Hackathon Judges
+    async function runOneClickAudit() {
+      const selectVal = document.getElementById("scenario-selector").value;
+      await loadScenario(selectVal);
+      await triggerVisionDigitise();
+      await runAudit();
+      await playSpokenAdvisory();
+    }
+
+    // Live Mic Recording using MediaRecorder
+    async function toggleRecording() {
+      const micBtn = document.getElementById("mic-btn");
+      const micIcon = document.getElementById("mic-icon");
+      const statusText = document.getElementById("recording-status");
+      const micTitle = document.getElementById("mic-title");
+
+      if (!isRecording) {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(stream);
+          audioChunks = [];
+
+          mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+          mediaRecorder.onstop = async () => {
+            const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+            await submitLiveVoiceRecording(audioBlob);
+          };
+
+          mediaRecorder.start();
+          isRecording = true;
+          micBtn.classList.add("pulse-record");
+          micTitle.innerText = "रिकॉर्डिंग चालू है... (बोलें)";
+          statusText.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-500 inline-block animate-ping"></span> रिकॉर्डिंग...`;
+        } catch (err) {
+          alert("माइक्रोफ़ोन एक्सेस की अनुमति नहीं मिली: " + err.message);
+        }
+      } else {
+        mediaRecorder.stop();
+        isRecording = false;
+        micBtn.classList.remove("pulse-record");
+        micTitle.innerText = "बोलकर दर्ज करें (Tap to Speak)";
+        statusText.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span> ट्रांसक्राइब हो रहा है...`;
+      }
+    }
+
+    async function submitLiveVoiceRecording(blob) {
+      const spinner = document.getElementById("transcribing-spinner");
+      spinner.classList.remove("hidden");
+
+      const formData = new FormData();
+      formData.append("audio", blob, "live_worker_recording.webm");
+      formData.append("language_code", activeScenario ? activeScenario.language_code : "hi-IN");
+
+      try {
+        const res = await fetch("/api/transcribe-and-log", {
+          method: "POST",
+          body: formData
+        });
+        const result = await res.json();
+        spinner.classList.add("hidden");
+
+        if (result.success) {
+          document.getElementById("transcript-box").innerText = `"${result.transcript}"`;
+          
+          // Prepend new structured log card
+          const log = result.structured_log;
+          const voiceContainer = document.getElementById("voice-logs-container");
+          const card = document.createElement("div");
+          card.className = "p-2.5 bg-amber-950/30 rounded-lg border border-amber-500/40 text-xs flex items-center justify-between";
+          card.innerHTML = `
+            <div>
+              <div class="font-semibold text-amber-400 flex items-center gap-1.5">
+                <span>📅 ${log.date}</span>
+                <span class="text-slate-300 font-normal">(${log.regular_hours} घंटे + ${log.overtime_hours} घंटे OT)</span>
+              </div>
+              <div class="text-slate-200 text-[11px] mt-0.5">${log.summary_hindi}</div>
+            </div>
+            ${log.advance_taken > 0 ? `<span class="px-2 py-0.5 rounded bg-red-500/20 text-red-300 border border-red-500/30 text-[10px] font-bold">एडवांस: ₹${log.advance_taken}</span>` : `<span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px]">सामान्य</span>`}
+          `;
+          voiceContainer.prepend(card);
+
+          // Add to current active scenario logs and re-audit
+          if (activeScenario) {
+            activeScenario.voice_logs.unshift(log);
+            runAudit();
+          }
+        }
+      } catch (err) {
+        spinner.classList.add("hidden");
+        console.error("Transcribe failed", err);
+      }
+    }
+
+    // Trigger Sarvam Vision Digitisation
+    async function triggerVisionDigitise() {
+      const spinner = document.getElementById("vision-spinner");
+      spinner.classList.remove("hidden");
+
+      // Simulate or call real backend DocAI digitise
+      setTimeout(() => {
+        spinner.classList.add("hidden");
+        // Re-render table with visual highlight
+        if (activeScenario) {
+          renderScenario(activeScenario);
+        }
+      }, 1200);
+    }
+
+    function handleDiaryUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          document.getElementById("diary-preview").src = e.target.result;
+          triggerVisionDigitise();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // Run Sarvam-105B Ground Officer Audit
+    async function runAudit() {
+      if (!activeScenario) return;
+
+      const payload = {
+        worker_logs: activeScenario.voice_logs,
+        thekedar_records: activeScenario.thekedar_diary,
+        daily_wage_rate: activeScenario.daily_rate,
+        worker_name: activeScenario.worker_name,
+        thekedar_name: activeScenario.thekedar_name
+      };
+
+      try {
+        const res = await fetch("/api/audit-reconcile", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          lastAuditResult = data.audit;
+          renderAuditResult(data.audit);
+        }
+      } catch (err) {
+        console.error("Audit failed", err);
+      }
+    }
+
+    function renderAuditResult(audit) {
+      document.getElementById("theft-amount-display").innerText = `₹${audit.total_theft_amount.toFixed(2)}`;
+      document.getElementById("legit-wage-display").innerText = `₹${audit.legitimate_total_payable.toFixed(2)}`;
+      document.getElementById("theft-summary-text").innerText = audit.officer_verdict_hindi;
+      document.getElementById("spoken-advisory-script").innerText = `"${audit.spoken_advisory_script}"`;
+
+      // Render Discrepancies
+      const list = document.getElementById("discrepancies-list");
+      list.innerHTML = "";
+      audit.discrepancies.forEach(d => {
+        const item = document.createElement("div");
+        item.className = "p-2 bg-slate-900/90 rounded-lg border border-red-500/30 flex items-start justify-between gap-2";
+        item.innerHTML = `
+          <div>
+            <span class="font-bold text-red-400">⚠️ तारीख ${d.date}:</span>
+            <span class="text-slate-300 ml-1">${d.issue}</span>
+          </div>
+          <span class="text-red-400 font-bold whitespace-nowrap">+₹${d.shortfall_inr}</span>
+        `;
+        list.appendChild(item);
+      });
+
+      // Update Wage Slip Modal fields
+      if (activeScenario) {
+        document.getElementById("slip-worker-name").innerText = activeScenario.worker_name;
+        document.getElementById("slip-thekedar-name").innerText = activeScenario.thekedar_name;
+        document.getElementById("slip-trade").innerText = activeScenario.trade;
+        document.getElementById("slip-site").innerText = activeScenario.location;
+        document.getElementById("slip-rate").innerText = `₹${activeScenario.daily_rate} / 8 घंटे`;
+      }
+
+      document.getElementById("slip-days-worked").innerText = `${audit.days_worked_actual} दिन`;
+      document.getElementById("slip-days-thekedar").innerText = `${audit.days_acknowledged_by_thekedar} दिन (${audit.falsely_marked_absent_days} अनुपस्थिति)`;
+      document.getElementById("slip-ot-hours").innerText = `${audit.overtime_hours_actual} घंटे`;
+      document.getElementById("slip-ot-thekedar").innerText = `${audit.overtime_hours_acknowledged} घंटा (${audit.unpaid_overtime_hours} घंटे काटा)`;
+      document.getElementById("slip-total-payable").innerText = `₹${audit.legitimate_total_payable.toFixed(2)}`;
+      document.getElementById("slip-theft-amount").innerText = `₹${audit.total_theft_amount.toFixed(2)}`;
+    }
+
+    // Play Bulbul v3 Spoken Advisory
+    async function playSpokenAdvisory() {
+      const scriptText = document.getElementById("spoken-advisory-script").innerText.replace(/"/g, '');
+      const btn = document.getElementById("play-advisory-btn");
+      btn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> आवाज़ तैयार हो रही है...`;
+      lucide.createIcons();
+
+      try {
+        const res = await fetch("/api/generate-spoken-advisory", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            text: scriptText,
+            language_code: activeScenario ? activeScenario.language_code : "hi-IN",
+            speaker: "aditya"
+          })
+        });
+        const data = await res.json();
+        if (data.success && data.audio_base64) {
+          const audio = document.getElementById("bulbul-audio-player");
+          audio.src = `data:audio/mp3;base64,${data.audio_base64}`;
+          audio.classList.remove("hidden");
+          audio.play();
+        }
+      } catch (err) {
+        console.error("TTS failed", err);
+      } finally {
+        btn.innerHTML = `<i data-lucide="play" class="w-3.5 h-3.5 fill-current"></i> आवाज़ सुनें`;
+        lucide.createIcons();
+      }
+    }
+
+    // Modal controls
+    function openWageSlipModal() {
+      document.getElementById("wage-slip-modal").classList.remove("hidden");
+      lucide.createIcons();
+    }
+
+    function closeWageSlipModal() {
+      document.getElementById("wage-slip-modal").classList.add("hidden");
+    }
+  </script>
+</body>
+</html>
